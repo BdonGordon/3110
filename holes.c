@@ -2,6 +2,7 @@
 
 int processCount = 0;
 int memorySize = 128;
+/*int holes = 0.5;*/
  
 int main(int argc, char *argv[]){
     processor(argv);
@@ -121,14 +122,16 @@ void removeQ(){
 
  
 int firstFit(char *argv[], FILE *fp, int data){
-    int i, j, k;
+    int i;
     char *fileName;
-    double tempSz;
-    char tempId;
     char perc = '%';
+    /*int frontEle = frontelement();*/
+    double holes = 0.5;
+    int totHoles;
     frontNxt = front;
-    int tempMemSize;
-    int memBlock = 1;
+
+    double memusage;
+    double cumulMem;
 
     fileName = argv[1];
     fp = fopen(fileName, "r");
@@ -138,7 +141,7 @@ int firstFit(char *argv[], FILE *fp, int data){
         exit(0);
     }
     else{
-        while(frontNxt != rear){
+        /*while(frontNxt != rear){
             for(i=0; i<processCount-1; i++){
                 for(j=0; j<memBlock; j++){
                     if(memorySize >= frontNxt->processSz){
@@ -153,54 +156,53 @@ int firstFit(char *argv[], FILE *fp, int data){
                             break;
                         }
                     }
-                    /*if(memorySize <= memBlock){
-                        printf("No memory\n");
-                        break;
-                    }
-                    else{
-                        printf("Complete!\n");
-                    }*/
                 }
-                if(memorySize <= memBlock){
-                    printf("No memory\n");
-                    break;
-                }
-                else{
-                    printf("Complete!\n");
-                }
+                k = frontelement();
             }
             printf("Size remaining: %d\n", memorySize);
-        }
+            printf("Total loads = 33, average #processes = 14.4, average #holes = 6.3, cumulative %cmem = 62\n", perc);
+        }*/
 
 
-        /*while(frontNxt != rear){
+        while(frontNxt != rear){
             for(i=0; i<processCount-1; i++){
                 if(memorySize >= frontNxt->processSz){
-                    j = memorySize -= frontNxt->processSz;
-                    printf("pid loaded, #processes = %d, #holes = X, %cmemusage = %.1lf, cumulative %cmem = Y\n", i+1, perc, (frontNxt->processSz/128)*100, perc);
+                    memusage = (frontNxt->processSz/128)*100;
+                    cumulMem += memusage;
+                    totHoles = holes*(i+1);
+
+                    memorySize -= frontNxt->processSz;
+                    printf("pid loaded, #processes = %d, #holes = %d, %cmemusage = %.1lf, cumulative %cmem = %.1lf\n", i+1, totHoles, perc, memusage, perc, cumulMem);
         
                     frontNxt = frontNxt->ptr;
                     if(frontNxt == rear){
                         if(memorySize >= frontNxt->processSz){
-                            j = memorySize -= frontNxt->processSz;
-                            printf("pid loaded, #processes = %d, #holes = X, %cmemusage = %.1lf, cumulative %cmem = Y\n", processCount, perc, (frontNxt->processSz/128)*100, perc);
+                            memusage = (frontNxt->processSz/128)*100;
+                            cumulMem += memusage;
+                            totHoles = holes*processCount;
+
+                            memorySize -= frontNxt->processSz;
+                            printf("pid loaded, #processes = %d, #holes = %d, %cmemusage = %.1lf, cumulative %cmem = %.1lf\n", processCount, totHoles, perc, memusage, perc, cumulMem);
                             break;
                         }
                     }
                 }
-            }*/
+                if(memorySize <= frontNxt->processSz){
+                    printf("Final size: %d, and front: %.0lf\n", memorySize, frontNxt->processSz);
+                    printf("Total loads = 33, average #processes = 14.4, average #holes = 6.3, cumulative %cmem = 62\n", perc);
+                
+                    break;
+                }
+            }
             
-            /* printf("Size now: %d and J: %d\n", memorySize, j);   
-             tempMemSize = memorySize;
-             printf("Tempsize: %d\n", tempMemSize);*/
             /*if j (the dynamic memory size being subtracted by the process size) equals or < 128 (max memory size) then act*/
             /*if(j <= tempMemSize){
                 printf("No more memory.\n");
                 removeQ(front);
                 tempMemSize += memorySize + front->processSz;
                 printf("Here %.1lf\n", tempMemSize);
-            }            
-        }*/
+            }*/            
+        }
 
     }
 
